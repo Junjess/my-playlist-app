@@ -11,10 +11,13 @@ import { useToast } from "../utils/ToastContext";
 
 export default function Musicas() {
   const dispatch = useDispatch<AppDispatch>();
-  const { itens, titulo, status } = useSelector((state: RootState) => state.musicas);
+  const { itens, titulo, status } = useSelector(
+    (state: RootState) => state.musicas
+  );
 
   const [artista, setArtista] = useState("");
   const [nome, setNome] = useState("");
+  const { showToast } = useToast();
 
   useEffect(() => {
     dispatch(fetchMusicas(""));
@@ -25,25 +28,6 @@ export default function Musicas() {
     dispatch(fetchMusicas(termo));
   };
 
-  const handleAlbumToPlaylist = async (albumId: string, albumNome: string, artista: string) => {
-    const musicas = await buscarMusicasDoAlbum(albumId);
-    const { showToast } = useToast();
-    if (musicas.length === 0) {
-      showToast("⚠ Nenhuma faixa encontrada neste álbum!", "error");
-      return;
-    }
-
-    dispatch(
-      addPlaylist({
-        id: Date.now().toString(),
-        nome: `${albumNome} - ${artista}`,
-        usuarioId: 1,
-        musicas,
-      })
-    );
-
-    showToast(`🎶 Álbum "${albumNome}" virou playlist com ${musicas.length} faixas!`, "success");
-  }
   return (
     <div
       style={{
@@ -134,7 +118,9 @@ export default function Musicas() {
               }}
             >
               <img
-                src={m.capa || "https://via.placeholder.com/300x200?text=Sem+Capa"}
+                src={
+                  m.capa || "https://via.placeholder.com/300x200?text=Sem+Capa"
+                }
                 alt={m.nome}
                 style={{
                   width: "100%",
@@ -153,13 +139,31 @@ export default function Musicas() {
                   justifyContent: "center",
                 }}
               >
-                <h4 style={{ margin: "0.5rem 0", fontSize: "1.2rem", color: "#222" }}>
+                <h4
+                  style={{
+                    margin: "0.5rem 0",
+                    fontSize: "1.2rem",
+                    color: "#222",
+                  }}
+                >
                   {m.nome}
                 </h4>
-                <p style={{ margin: "0.4rem 0", fontSize: "1rem", color: "#009739" }}>
+                <p
+                  style={{
+                    margin: "0.4rem 0",
+                    fontSize: "1rem",
+                    color: "#009739",
+                  }}
+                >
                   👤 {m.artista}
                 </p>
-                <p style={{ margin: "0.3rem 0", fontSize: "0.9rem", color: "#666" }}>
+                <p
+                  style={{
+                    margin: "0.3rem 0",
+                    fontSize: "0.9rem",
+                    color: "#666",
+                  }}
+                >
                   {m.tipo}
                 </p>
 
@@ -167,7 +171,11 @@ export default function Musicas() {
                 {m.tipo === "Música" && <PlaylistSelect music={m} />}
 
                 {m.tipo === "Álbum" && (
-                  <AlbumToPlaylistSelect albumId={m.id} albumNome={m.nome} artista={m.artista} />
+                  <AlbumToPlaylistSelect
+                    albumId={m.id}
+                    albumNome={m.nome}
+                    artista={m.artista}
+                  />
                 )}
               </div>
             </div>

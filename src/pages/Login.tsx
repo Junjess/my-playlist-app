@@ -1,17 +1,21 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import type { User } from "../types/User";
+import { useDispatch } from "react-redux";
 import logoBatucao from "../assets/logo_batucao.png";
-import { useToast } from "../utils/ToastContext"; // ⬅️ Toast
+import { useToast } from "../utils/ToastContext";
+import { loadPlaylistsAfterLogin } from "../redux/PlaylistSlice";
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
   const navigate = useNavigate();
-  const { showToast } = useToast(); 
+  const { showToast } = useToast();
+  const dispatch = useDispatch();
+
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
 
+    //validações básicas
     if (!/\S+@\S+\.\S+/.test(email)) {
       showToast("⚠ Digite um email válido!", "error");
       return;
@@ -21,10 +25,33 @@ export default function Login() {
       return;
     }
 
-    const user: User = { id: Date.now(), email };
+    // busca lista de usuários no LocalStorage
+    const usuarios = JSON.parse(localStorage.getItem("usuarios") || "[]");
+
+    // verifica se o email já existe
+    let user = usuarios.find((u: any) => u.email === email);
+
+    if (!user) {
+      user = {
+        id: Date.now(),
+        email,
+        senha,
+      };
+      usuarios.push(user);
+      localStorage.setItem("usuarios", JSON.stringify(usuarios));
+      showToast("🆕 Conta criada com sucesso!", "success");
+    } else if (user.senha !== senha) {
+      showToast("❌ Senha incorreta!", "error");
+      return;
+    }
+
+    // salva o usuário logado na sessão
     sessionStorage.setItem("user", JSON.stringify(user));
 
-    showToast("✅ Login realizado com sucesso!", "success"); 
+    // recarrega as playlists desse usuário no Redux
+    dispatch(loadPlaylistsAfterLogin());
+
+    showToast(`✅ Bem-vindo(a), ${user.email}!`, "success");
     navigate("/home");
   };
 

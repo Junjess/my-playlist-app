@@ -9,13 +9,13 @@ import {
 } from "../redux/PlaylistSlice";
 import type { Playlist } from "../types/Playlist";
 import Header from "../components/Header";
-import { useToast } from "../utils/ToastContext"; 
+import { useToast } from "../utils/ToastContext";
 
 export default function Playlists() {
-  const playlists = useSelector((state: RootState) => state.playlists.itens);
+  const playlistsRedux = useSelector((state: RootState) => state.playlists.itens);
   const user = JSON.parse(sessionStorage.getItem("user") || "{}");
   const dispatch = useDispatch();
-  const { showToast } = useToast(); 
+  const { showToast } = useToast();
 
   const [nome, setNome] = useState("");
   const [editando, setEditando] = useState<string | null>(null);
@@ -23,26 +23,32 @@ export default function Playlists() {
   const [lastPlaylistId, setLastPlaylistId] = useState<string | null>(null);
   const [expandida, setExpandida] = useState<string | null>(null);
 
+  // 🔹 Filtra playlists do usuário logado
+  const playlists = playlistsRedux.filter((p) => p.usuarioId === user.id);
+
   useEffect(() => {
     const stored = sessionStorage.getItem("lastPlaylist");
     if (stored) setLastPlaylistId(stored);
   }, []);
-  
+
   const handleAdd = () => {
     if (nome.trim() === "") {
       showToast("⚠ Digite um nome para a playlist!", "error");
       return;
     }
+
     const nova: Playlist = {
       id: Date.now().toString(),
       nome,
       usuarioId: user?.id || 0,
       musicas: [],
     };
+
     dispatch(addPlaylist(nova));
     setNome("");
     showToast(`📂 Playlist "${nova.nome}" criada com sucesso!`, "success");
   };
+
   const handleEdit = (id: string) => {
     if (novoNome.trim() === "") {
       showToast("⚠ Digite um novo nome!", "error");
@@ -53,6 +59,7 @@ export default function Playlists() {
     setEditando(null);
     setNovoNome("");
   };
+
   const handleDelete = (id: string) => {
     if (confirm("Deseja excluir esta playlist?")) {
       dispatch(deletePlaylist(id));
@@ -67,7 +74,10 @@ export default function Playlists() {
   const handleAccess = (id: string) => {
     sessionStorage.setItem("lastPlaylist", id);
     setLastPlaylistId(id);
-    showToast(`▶️ Tocando playlist "${playlists.find((p) => p.id === id)?.nome}"`, "info");
+    showToast(
+      `▶️ Tocando playlist "${playlists.find((p) => p.id === id)?.nome}"`,
+      "info"
+    );
   };
 
   return (
@@ -121,14 +131,19 @@ export default function Playlists() {
       {/* Listagem de playlists */}
       <div style={{ maxWidth: "900px", margin: "0 auto" }}>
         {playlists.length === 0 ? (
-          <p style={{ textAlign: "center" }}>Nenhuma playlist criada ainda 🎶</p>
+          <p style={{ textAlign: "center" }}>
+            Nenhuma playlist criada ainda 🎶
+          </p>
         ) : (
           playlists.map((pl) => (
             <div
               key={pl.id}
               style={{
                 background: lastPlaylistId === pl.id ? "#eaffea" : "#fff",
-                border: lastPlaylistId === pl.id ? "2px solid #009739" : "1px solid #ddd",
+                border:
+                  lastPlaylistId === pl.id
+                    ? "2px solid #009739"
+                    : "1px solid #ddd",
                 padding: "1.2rem",
                 marginBottom: "1.2rem",
                 borderRadius: "12px",
@@ -176,7 +191,9 @@ export default function Playlists() {
                     <h3 style={{ margin: 0, color: "#222" }}>
                       📂 {pl.nome}{" "}
                       {lastPlaylistId === pl.id && (
-                        <span style={{ color: "#009739", fontSize: "0.9rem" }}>
+                        <span
+                          style={{ color: "#009739", fontSize: "0.9rem" }}
+                        >
                           🟢 Última acessada
                         </span>
                       )}
@@ -241,7 +258,9 @@ export default function Playlists() {
                             setExpandida(expandida === pl.id ? null : pl.id)
                           }
                         >
-                          {expandida === pl.id ? "⬆ Ocultar músicas" : "⬇ Mostrar músicas"}
+                          {expandida === pl.id
+                            ? "⬆ Ocultar músicas"
+                            : "⬇ Mostrar músicas"}
                         </button>
                       )}
                     </div>
