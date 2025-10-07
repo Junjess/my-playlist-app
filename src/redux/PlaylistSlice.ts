@@ -5,7 +5,6 @@ import type { Music } from "../types/Music";
 
 const STORAGE_KEY = "batucao_playlists";
 
-// Função: carrega todas playlists do LocalStorage
 const loadAllPlaylists = (): Playlist[] => {
   try {
     const stored = localStorage.getItem(STORAGE_KEY);
@@ -15,12 +14,10 @@ const loadAllPlaylists = (): Playlist[] => {
   }
 };
 
-// Função: salva todas playlists
 const saveAllPlaylists = (playlists: Playlist[]) => {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(playlists));
 };
 
-// Função: retorna playlists do usuário logado
 const loadUserPlaylists = (): Playlist[] => {
   const user = JSON.parse(sessionStorage.getItem("user") || "{}");
   const all = loadAllPlaylists();
@@ -39,38 +36,27 @@ const playlistSlice = createSlice({
   name: "playlists",
   initialState,
   reducers: {
-    // Criar nova playlist
     addPlaylist: (state, action: PayloadAction<Playlist>) => {
       const all = loadAllPlaylists();
       all.push(action.payload);
       saveAllPlaylists(all);
-
-      // atualiza estado com playlists do usuário logado
       const user = JSON.parse(sessionStorage.getItem("user") || "{}");
       state.itens = all.filter((p) => p.usuarioId === user.id);
     },
-
-    // Excluir playlist
     deletePlaylist: (state, action: PayloadAction<string>) => {
       const all = loadAllPlaylists().filter((p) => p.id !== action.payload);
       saveAllPlaylists(all);
-
       const user = JSON.parse(sessionStorage.getItem("user") || "{}");
       state.itens = all.filter((p) => p.usuarioId === user.id);
     },
-
-    // Renomear playlist
     editPlaylist: (state, action: PayloadAction<{ id: string; nome: string }>) => {
       const all = loadAllPlaylists();
       const pl = all.find((p) => p.id === action.payload.id);
       if (pl) pl.nome = action.payload.nome;
       saveAllPlaylists(all);
-
       const user = JSON.parse(sessionStorage.getItem("user") || "{}");
       state.itens = all.filter((p) => p.usuarioId === user.id);
     },
-
-    // Adicionar música
     addMusicToPlaylist: (
       state,
       action: PayloadAction<{ playlistId: string; music: Music }>
@@ -81,12 +67,9 @@ const playlistSlice = createSlice({
         pl.musicas.push(action.payload.music);
         saveAllPlaylists(all);
       }
-
       const user = JSON.parse(sessionStorage.getItem("user") || "{}");
       state.itens = all.filter((p) => p.usuarioId === user.id);
     },
-
-    // Remover música
     removeMusicFromPlaylist: (
       state,
       action: PayloadAction<{ playlistId: string; musicId: string }>
@@ -97,12 +80,9 @@ const playlistSlice = createSlice({
         pl.musicas = pl.musicas.filter((m) => m.id !== action.payload.musicId);
         saveAllPlaylists(all);
       }
-
       const user = JSON.parse(sessionStorage.getItem("user") || "{}");
       state.itens = all.filter((p) => p.usuarioId === user.id);
     },
-
-    // Recarregar playlists após login
     loadPlaylistsAfterLogin: (state) => {
       state.itens = loadUserPlaylists();
     },

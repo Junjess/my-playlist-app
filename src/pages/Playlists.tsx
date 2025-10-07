@@ -23,7 +23,6 @@ export default function Playlists() {
   const [lastPlaylistId, setLastPlaylistId] = useState<string | null>(null);
   const [expandida, setExpandida] = useState<string | null>(null);
 
-  // 🔹 Filtra playlists do usuário logado
   const playlists = playlistsRedux.filter((p) => p.usuarioId === user.id);
 
   useEffect(() => {

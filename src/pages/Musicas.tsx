@@ -2,10 +2,8 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import type { RootState, AppDispatch } from "../redux/Store";
 import { fetchMusicas } from "../redux/MusicSlice";
-import { addPlaylist } from "../redux/PlaylistSlice";
 import Header from "../components/Header";
 import PlaylistSelect from "../components/PlaylistSelect";
-import { buscarMusicasDoAlbum } from "../service/api";
 import AlbumToPlaylistSelect from "../components/AlbumToPlaylistSelect";
 import { useToast } from "../utils/ToastContext";
 

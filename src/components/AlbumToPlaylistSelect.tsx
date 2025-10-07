@@ -2,7 +2,6 @@ import { useDispatch, useSelector } from "react-redux";
 import type { RootState } from "../redux/Store";
 import { addPlaylist, addMusicToPlaylist } from "../redux/PlaylistSlice";
 import { buscarMusicasDoAlbum } from "../service/api";
-import type { Music } from "../types/Music";
 import { useState } from "react";
 
 interface Props {

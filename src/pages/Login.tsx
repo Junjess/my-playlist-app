@@ -14,8 +14,6 @@ export default function Login() {
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-
-    //validações básicas
     if (!/\S+@\S+\.\S+/.test(email)) {
       showToast("⚠ Digite um email válido!", "error");
       return;
@@ -24,13 +22,8 @@ export default function Login() {
       showToast("⚠ A senha deve ter no mínimo 6 caracteres!", "error");
       return;
     }
-
-    // busca lista de usuários no LocalStorage
     const usuarios = JSON.parse(localStorage.getItem("usuarios") || "[]");
-
-    // verifica se o email já existe
     let user = usuarios.find((u: any) => u.email === email);
-
     if (!user) {
       user = {
         id: Date.now(),
@@ -44,13 +37,8 @@ export default function Login() {
       showToast("❌ Senha incorreta!", "error");
       return;
     }
-
-    // salva o usuário logado na sessão
     sessionStorage.setItem("user", JSON.stringify(user));
-
-    // recarrega as playlists desse usuário no Redux
     dispatch(loadPlaylistsAfterLogin());
-
     showToast(`✅ Bem-vindo(a), ${user.email}!`, "success");
     navigate("/home");
   };

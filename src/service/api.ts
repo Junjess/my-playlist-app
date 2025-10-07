@@ -33,7 +33,6 @@ export const buscarPorMusica = async (nome: string): Promise<Music[]> => {
     tipo: "Música",
   }));
 };
-
 export const buscarPorMusicaComArtista = async (
   musica: string,
   artista: string
@@ -51,7 +50,6 @@ export const buscarPorMusicaComArtista = async (
     tipo: "Música",
   }));
 };
-
 export const buscarPorArtista = async (nome: string): Promise<Music[]> => {
   const res = await axios.get(`${API_URL}track-top10.php?s=${encodeURIComponent(nome)}`);
   if (!res.data.track) return [];
@@ -64,7 +62,6 @@ export const buscarPorArtista = async (nome: string): Promise<Music[]> => {
     tipo: "Música",
   }));
 };
-
 export const buscarPorAlbum = async (nome: string): Promise<Music[]> => {
   const res = await axios.get(`${API_URL}searchalbum.php?a=${encodeURIComponent(nome)}`);
   if (!res.data.album) return [];
@@ -77,7 +74,6 @@ export const buscarPorAlbum = async (nome: string): Promise<Music[]> => {
     tipo: "Álbum",
   }));
 };
-
 export const buscarPorAlbumComArtista = async (
   album: string,
   artista: string
@@ -95,7 +91,6 @@ export const buscarPorAlbumComArtista = async (
     tipo: "Álbum",
   }));
 };
-
 export const buscarGenerico = async (texto: string): Promise<Music[]> => {
   const [artista, nome] = texto.includes("::") ? texto.split("::") : [texto, ""];
   let musicas: Music[] = [];

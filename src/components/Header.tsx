@@ -38,7 +38,7 @@ export default function Header({ titulo }: HeaderProps) {
         <img
           src={logoBatucao}
           alt="Logo BatuCão"
-          style={{ width: "40px", height: "40px", objectFit: "contain" }}
+          style={{ width: "70px", height: "70px", objectFit: "contain" }}
         />
         <span style={{ fontSize: "1.4rem", fontWeight: "bold" }}>BatuCão</span>
       </div>
